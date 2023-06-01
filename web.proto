@@ -1,0 +1,33 @@
+syntax = "proto3";
+package web;
+option go_package = "example.com/web";
+service web{
+  rpc req_pq (request_pq) returns (result_pq){}
+  rpc req_DH_params (request_DH) returns (result_DH){}
+}
+
+message request_pq{
+  string nonce = 1;
+  int32 message_id = 2;
+}
+
+message result_pq {
+  string nonce = 1;
+  string server_nonce = 2;
+  int32 message_id = 3;
+  int32 p = 4;
+  int32 g = 5;
+}
+
+message request_DH{
+  string nonce = 1;
+  string server_nonce = 2;
+  int32 message_id = 3;
+  int32 a = 4;
+}
+message result_DH {
+  string nonce = 1;
+  string server_nonce = 2;
+  int32 message_id = 3;
+  int32 b = 4;
+}

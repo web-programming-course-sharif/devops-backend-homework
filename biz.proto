@@ -1,0 +1,26 @@
+syntax = "proto3";
+package web;
+option go_package = "example.com/biz";
+service web{
+  rpc get_users (request) returns (result){}
+}
+
+message request{
+  string user_id = 1;
+  int32 auth_key = 2;
+  int32 message_id = 3;
+}
+
+message result {
+  repeated user users = 1;
+  int32 message_id = 2;
+}
+
+message user{
+  string name = 1;
+  string family = 2;
+  int32 id = 3;
+  int32 age = 4;
+  string sex = 5;
+  string createdAt = 6;
+}
