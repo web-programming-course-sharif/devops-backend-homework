@@ -23,6 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type WebClient interface {
 	GetUsers(ctx context.Context, in *Request, opts ...grpc.CallOption) (*Result, error)
+	GetUsersWithSqlInject(ctx context.Context, in *RequestSqlInject, opts ...grpc.CallOption) (*Result, error)
 }
 
 type webClient struct {
@@ -42,11 +43,21 @@ func (c *webClient) GetUsers(ctx context.Context, in *Request, opts ...grpc.Call
 	return out, nil
 }
 
+func (c *webClient) GetUsersWithSqlInject(ctx context.Context, in *RequestSqlInject, opts ...grpc.CallOption) (*Result, error) {
+	out := new(Result)
+	err := c.cc.Invoke(ctx, "/web.web/get_users_with_sql_inject", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // WebServer is the server API for Web service.
 // All implementations must embed UnimplementedWebServer
 // for forward compatibility
 type WebServer interface {
 	GetUsers(context.Context, *Request) (*Result, error)
+	GetUsersWithSqlInject(context.Context, *RequestSqlInject) (*Result, error)
 	mustEmbedUnimplementedWebServer()
 }
 
@@ -56,6 +67,9 @@ type UnimplementedWebServer struct {
 
 func (UnimplementedWebServer) GetUsers(context.Context, *Request) (*Result, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUsers not implemented")
+}
+func (UnimplementedWebServer) GetUsersWithSqlInject(context.Context, *RequestSqlInject) (*Result, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUsersWithSqlInject not implemented")
 }
 func (UnimplementedWebServer) mustEmbedUnimplementedWebServer() {}
 
@@ -88,6 +102,24 @@ func _Web_GetUsers_Handler(srv interface{}, ctx context.Context, dec func(interf
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Web_GetUsersWithSqlInject_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RequestSqlInject)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WebServer).GetUsersWithSqlInject(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/web.web/get_users_with_sql_inject",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WebServer).GetUsersWithSqlInject(ctx, req.(*RequestSqlInject))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Web_ServiceDesc is the grpc.ServiceDesc for Web service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -98,6 +130,10 @@ var Web_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "get_users",
 			Handler:    _Web_GetUsers_Handler,
+		},
+		{
+			MethodName: "get_users_with_sql_inject",
+			Handler:    _Web_GetUsersWithSqlInject_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
