@@ -1,4 +1,4 @@
-package web
+package main
 
 import (
 	"context"
@@ -52,7 +52,8 @@ func (s *server) RequestDh(ctx context.Context, in *pb.Request_DH) (*pb.Result_D
 }
 
 func main() {
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", 313))
+	port := 3313
+	lis, err := net.Listen("tcp", fmt.Sprintf("localhost:%d", port))
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
