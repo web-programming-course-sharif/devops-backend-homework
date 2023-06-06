@@ -52,6 +52,7 @@ func (s *server) RequestDh(ctx context.Context, in *pb.Request_DH) (*pb.Result_D
 }
 
 func main() {
+	redis.ConnectToRedis()
 	port := 3313
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
 	if err != nil {

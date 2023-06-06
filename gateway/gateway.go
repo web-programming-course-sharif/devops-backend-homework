@@ -27,11 +27,11 @@ func main() {
 			//answer, err := client.ReqPq(context.Background(), &pb.RequestPq{Nonce: nonce, MessageId: int32(message_id)})
 			if err != nil {
 				c.JSON(200, gin.H{
-					"answer": answer,
+					"answer": "Can not authenticate.",
 				})
 			} else {
 				c.JSON(403, gin.H{
-					"answer": "Can not authenticate.",
+					"answer": answer,
 				})
 			}
 		} else {
