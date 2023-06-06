@@ -30,7 +30,7 @@ func randomString(n int) string {
 	return sb.String()
 }
 
-func (s *server) RequestPq(ctx context.Context, in *pb.RequestPq) (*pb.ResultPq, error) {
+func (s *server) ReqPq(ctx context.Context, in *pb.RequestPq) (*pb.ResultPq, error) {
 	log.Printf("Received: %v", in.GetMessageId())
 	serverNonce := randomString(20)
 	key := []byte(serverNonce + in.GetNonce())
