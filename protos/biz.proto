@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 option go_package = "example.com/biz";
-service web{
+service biz{
   rpc get_users (request) returns (result){}
   rpc get_users_with_sql_inject (request_sql_inject) returns (result){}
 }

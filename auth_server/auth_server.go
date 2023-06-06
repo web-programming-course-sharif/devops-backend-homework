@@ -40,7 +40,7 @@ func (s *server) ReqPq(ctx context.Context, in *pb.RequestPq) (*pb.ResultPq, err
 	println(serverNonce)
 	return &pb.ResultPq{Nonce: in.GetNonce(), ServerNonce: serverNonce, MessageId: in.GetMessageId() + 1, P: 23, G: int32(g)}, nil
 }
-func (s *server) RequestDh(ctx context.Context, in *pb.Request_DH) (*pb.Result_DH, error) {
+func (s *server) Req_DHParams(ctx context.Context, in *pb.Request_DH) (*pb.Result_DH, error) {
 	log.Printf("Received: %v", in.GetMessageId())
 	key := []byte(in.GetServerNonce() + in.GetNonce())
 	sha1Hash := fmt.Sprintf("%x", sha1.Sum(key))
