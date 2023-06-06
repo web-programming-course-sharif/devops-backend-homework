@@ -1,12 +1,19 @@
-package web
+package main
 
 import (
 	"context"
 	"database/sql"
 	"fmt"
 	"log"
-	pb "web/example.com/biz"
+	"net"
+	pb "web/protos/example.com/biz"
+
+	"google.golang.org/grpc"
 )
+
+type server struct {
+	pb.UnimplementedWebServer
+}
 
 var db *sql.DB
 
@@ -36,6 +43,19 @@ func getUser(query string, messageId int32) (*pb.Result, error) {
 	}
 	return &pb.Result{Users: usersList, MessageId: messageId}, nil
 }
+
 func main() {
 	db, _ = sql.Open("postgres", "postgres://baeldung:baeldung@localhost:5431/web")
+
+	port := 3314
+	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
+	if err != nil {
+		log.Fatalf("failed to listen: %v", err)
+	}
+	s := grpc.NewServer()
+	pb.RegisterWebServer(s, &server{})
+	log.Printf("server listening at %v", lis.Addr())
+	if err := s.Serve(lis); err != nil {
+		log.Fatalf("failed to serve: %v", err)
+	}
 }

@@ -3,16 +3,16 @@ package main
 import (
 	"context"
 	"crypto/sha1"
-	_ "crypto/sha1"
 	"fmt"
-	"google.golang.org/grpc"
 	"log"
 	"math/rand"
 	"net"
 	"strings"
 	"time"
-	pb "web/example.com/web"
+	pb "web/protos/example.com/auth"
 	"web/redis"
+
+	"google.golang.org/grpc"
 )
 
 type server struct {
@@ -53,7 +53,7 @@ func (s *server) RequestDh(ctx context.Context, in *pb.Request_DH) (*pb.Result_D
 
 func main() {
 	port := 3313
-	lis, err := net.Listen("tcp", fmt.Sprintf("localhost:%d", port))
+	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}

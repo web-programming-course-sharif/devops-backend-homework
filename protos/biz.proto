@@ -1,5 +1,5 @@
 syntax = "proto3";
-package web;
+
 option go_package = "example.com/biz";
 service web{
   rpc get_users (request) returns (result){}

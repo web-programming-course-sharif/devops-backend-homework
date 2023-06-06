@@ -1,6 +1,6 @@
 syntax = "proto3";
 package web;
-option go_package = "example.com/web";
+option go_package = "example.com/auth";
 service web{
   rpc req_pq (request_pq) returns (result_pq){}
   rpc req_DH_params (request_DH) returns (result_DH){}
