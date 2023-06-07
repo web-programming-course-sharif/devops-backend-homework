@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/JGLTechnologies/gin-rate-limit"
 	"sync"
 
 	"github.com/gin-gonic/gin"
@@ -13,16 +12,6 @@ import (
 	pba "web/protos/example.com/auth"
 	pbb "web/protos/example.com/biz"
 )
-
-func keyFunc(c *gin.Context) string {
-	return c.ClientIP()
-}
-
-func errorHandler(c *gin.Context, info ratelimit.Info) {
-	fmt.Println(info.ResetTime)
-	fmt.Println(info)
-	c.String(429, "Too many requests. Try again in "+time.Until(info.ResetTime).String())
-}
 
 var (
 	requestCount         int
@@ -65,10 +54,25 @@ func rateLimitMiddleware() gin.HandlerFunc {
 		c.Next()
 	}
 }
+func CORSMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
+		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With")
+		c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT")
 
+		if c.Request.Method == "OPTIONS" {
+			c.AbortWithStatus(204)
+			return
+		}
+
+		c.Next()
+	}
+}
 func main() {
 	fmt.Println("starting")
 	r := gin.Default()
+	r.Use(CORSMiddleware())
 	rateLimit := rateLimitMiddleware()
 	connPba, errPba := grpc.Dial("127.0.0.1:3313", grpc.WithInsecure())
 	connPbb, errPbb := grpc.Dial("127.0.0.1:3314", grpc.WithInsecure())
