@@ -1,0 +1,128 @@
+swagger: "2.0"
+info:
+  title: Gateway
+  description: API description of Gateway service.
+  version: 1.0.0
+host: localhost:8080
+schemes:
+  - http
+paths:
+  /auth/req_pq:
+    post:
+      summary: Initialize authentication.
+      description: It initializes the authentication and prepare it for the second authentication request.
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: user
+          description: The user to initialize authentication.
+          schema:
+            type: object
+            required:
+              - nonce
+              - message_id
+            properties:
+              nonce:
+                type: string
+              message_id:
+                type: integer
+      responses:
+        200:
+          description: OK
+        403:
+          description: Can not authenticate.
+        429:
+          description: Rate limit exceeded. User can try again in 24 hours.
+
+  /auth/req_DH_pq:
+    post:
+      summary: Complete authentication.
+      description: It is the second request to complete authentication.
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: user
+          description: The user to complete its initialized authentication.
+          schema:
+            type: object
+            required:
+              - nonce
+              - server_nonce
+              - message_id
+              - a
+            properties:
+              nonce:
+                type: string
+              server_nonce:
+                type: string
+              message_id:
+                type: integer
+              a:
+                type: integer
+      responses:
+        200:
+          description: OK
+        403:
+          description: Can not authenticate.
+        429:
+          description: Rate limit exceeded. User can try again in 24 hours.
+
+  /biz/get_users_with_sql_inject:
+    post:
+      summary: Returns a list of users, with SQL injection.
+      description: It returns a list of users from the postgreSQL database. It also has SQL injection security issue.
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: user's id
+          description: The user's id to get its information. If user is `null`, then it returns the list of `100` first users.
+          schema:
+            type: object
+            required:
+              - user_id
+              - auth_key
+              - message_id
+            properties:
+              user_id:
+                type: string
+              auth_key:
+                type: integer
+              message_id:
+                type: integer
+      responses:
+        200:
+          description: OK
+        403:
+          description: Can not authenticate.
+
+  /biz/get_users:
+    post:
+      summary: Returns a list of users.
+      description: It returns a list of users from the postgreSQL database and does not have SQL injection security issue.
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: user's id
+          description: The user's id to get its information. If user is `null`, then it returns the list of `100` first users.
+          schema:
+            type: object
+            required:
+              - user_id
+              - auth_key
+              - message_id
+            properties:
+              user_id:
+                type: integer
+              auth_key:
+                type: integer
+              message_id:
+                type: integer
+      responses:
+        200:
+          description: OK
+        403:
+          description: Can not authenticate.
